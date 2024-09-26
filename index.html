@@ -35,7 +35,7 @@
     <button onclick="logAction('講電話')">講電話</button>
 
     <button onclick="downloadCSV()">下載 CSV</button>
-    <button onclick="clear()">Clear</button>
+    <button onclick="clearlog()">Clear</button>
     <div class="log" id="logArea">
         <h2>行為紀錄</h2>
         <ul id="logList"></ul>
@@ -91,7 +91,7 @@
                 // 清空開始時間
                 phoneStartTime = null;
             } else {
-                logAction(`結束看手機 (看了 ${duration})`);
+                logAction(`結束看手機`);
             }
         }
 
@@ -111,6 +111,7 @@
 
         // 下載紀錄為 CSV 檔案，並加入當天日期作為檔案名稱的一部分
         function downloadCSV() {
+          console.log('download')
             let logs = JSON.parse(localStorage.getItem('logs')) || [];
 
             if (logs.length === 0) {
@@ -143,8 +144,11 @@
             document.body.removeChild(a);
         }
 
-        function clear(){
-            localStorage.clear('logs')
+        function clearlog(){
+            localStorage.removeItem('logs')
+            console.log(localStorage.getItem('logs'))
+             const logItem = document.createElement('li');               
+            logItem.textContent = ""
         }
     </script>
 
