@@ -101,7 +101,7 @@
             logList.innerHTML = ''; // 清空列表
 
             let logs = JSON.parse(localStorage.getItem('logs')) || [];
-
+            logs.reverse();
             logs.forEach((log) => {
                 const logItem = document.createElement('li');
                 logItem.textContent = `${log.timestamp} - ${log.action}`;
