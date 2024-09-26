@@ -24,60 +24,121 @@
     <h1>同事行為紀錄</h1>
 
     <button onclick="logAction('看手機')">看手機</button>
-    <button onclick="logAction('結束看手機')">結束看手機</button>
+    <button onclick="endPhoneTime()">結束看手機</button>
     <button onclick="logAction('咳嗽')">咳嗽</button>
     <button onclick="logAction('大聲跺腳')">大聲跺腳</button>
     <button onclick="logAction('離開座位')">離開座位</button>
     <button onclick="logAction('回到座位')">回到座位</button>
+    <button onclick="logAction('唱歌')">唱歌</button>
+    <button onclick="logAction('嘆氣聲')">嘆氣聲</button>
+    <button onclick="logAction('對手機說話')">對手機說話</button>
+    <button onclick="logAction('講電話')">講電話</button>
 
     <div class="log" id="logArea">
         <h2>行為紀錄</h2>
         <ul id="logList"></ul>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <button onclick="downloadCSV()">下載 CSV</button>
 
     <script>
-        // Firebase 設定 (用你的 Firebase 配置替換這部分)
-       const firebaseConfig = {
-          apiKey: "AIzaSyBRpxWMGyBB-3oxQpjo6fCJGN1HP8wzu4M",
-          authDomain: "jjjhhh-53f5b.firebaseapp.com",
-          projectId: "jjjhhh-53f5b",
-          storageBucket: "jjjhhh-53f5b.appspot.com",
-          messagingSenderId: "1063966246241",
-          appId: "1:1063966246241:web:f72f2a08de6ca04f6bb120",
-          measurementId: "G-2MH4DT6K7X"
+        let phoneStartTime = null; // 儲存看手機的開始時間
+
+        // 初始化，從 Local Storage 中載入紀錄
+        window.onload = function() {
+            displayLogs();
         };
 
-        // 初始化 Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // 當前的日誌區域
-        const logList = document.getElementById('logList');
-
-        // 記錄行為並存儲到 Firestore
+        // 記錄行為並儲存在 Local Storage
         function logAction(action) {
             const timestamp = new Date().toLocaleString();
-            
-            // 更新 UI
-            const logItem = document.createElement('li');
-            logItem.textContent = `${timestamp} - ${action}`;
-            logList.appendChild(logItem);
-            
-            // 儲存到 Firestore
-            db.collection('records').add({
-                action: action,
-                timestamp: timestamp
-            })
-            .then(() => {
-                console.log("紀錄已保存!");
-            })
-            .catch((error) => {
-                console.error("儲存失敗: ", error);
+            const log = { action: action, timestamp: timestamp };
+
+            // 針對 "看手機" 記錄開始時間
+            if (action === '看手機') {
+                phoneStartTime = new Date(); // 記錄開始時間
+            }
+
+            // 取得現有的紀錄
+            let logs = JSON.parse(localStorage.getItem('logs')) || [];
+
+            // 將新紀錄加入到現有紀錄中
+            logs.push(log);
+
+            // 將更新後的紀錄儲存在 Local Storage
+            localStorage.setItem('logs', JSON.stringify(logs));
+
+            // 更新頁面上顯示的紀錄
+            displayLogs();
+        }
+
+        // 計算 "看手機" 的時長
+        function endPhoneTime() {
+            if (phoneStartTime) {
+                const phoneEndTime = new Date();
+                const timeSpent = (phoneEndTime - phoneStartTime) / 1000; // 計算時差，單位秒
+
+                const minutes = Math.floor(timeSpent / 60);
+                const seconds = Math.floor(timeSpent % 60);
+
+                const duration = `${minutes} 分 ${seconds} 秒`;
+
+                // 記錄 "結束看手機" 並附加時間長度
+                logAction(`結束看手機 (看了 ${duration})`);
+
+                // 清空開始時間
+                phoneStartTime = null;
+            } else {
+                alert("尚未開始記錄看手機的時間！");
+            }
+        }
+
+        // 顯示紀錄在頁面上
+        function displayLogs() {
+            const logList = document.getElementById('logList');
+            logList.innerHTML = ''; // 清空列表
+
+            let logs = JSON.parse(localStorage.getItem('logs')) || [];
+
+            logs.forEach((log) => {
+                const logItem = document.createElement('li');
+                logItem.textContent = `${log.timestamp} - ${log.action}`;
+                logList.appendChild(logItem);
             });
+        }
+
+        // 下載紀錄為 CSV 檔案，並加入當天日期作為檔案名稱的一部分
+        function downloadCSV() {
+            let logs = JSON.parse(localStorage.getItem('logs')) || [];
+
+            if (logs.length === 0) {
+                alert('沒有紀錄可下載');
+                return;
+            }
+
+            // 生成 CSV 內容
+            let csvContent = 'timestamp,action\n';
+            logs.forEach((log) => {
+                csvContent += `"${log.timestamp}","${log.action}"\n`;
+            });
+
+            // 加入 BOM 防止亂碼問題
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+            // 取得當天日期作為檔案名稱的一部分
+            const today = new Date();
+            const dateStr = today.toISOString().slice(0, 10); // 例如 2024-09-26
+            const filename = `logs_${dateStr}.csv`;
+
+            // 創建一個隱藏的下載連結
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
 
