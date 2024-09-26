@@ -1,0 +1,52 @@
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同事行為紀錄</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .log {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Jeff行為紀錄</h1>
+
+    <button onclick="logAction('看手機')">看手機</button>
+    <button onclick="logAction('結束看手機')">結束看手機</button>
+    <button onclick="logAction('咳嗽')">咳嗽</button>
+    <button onclick="logAction('大聲跺腳')">大聲跺腳</button>
+    <button onclick="logAction('離開座位')">離開座位</button>
+    <button onclick="logAction('回到座位')">回到座位</button>
+    <button onclick="logAction('嘆氣聲')">嘆氣聲</button>
+    <button onclick="logAction('對手機說話')">對手機說話</button>
+    <button onclick="logAction('講電話')">講電話</button>
+
+    <div class="log" id="logArea">
+        <h2>行為紀錄</h2>
+        <ul id="logList"></ul>
+    </div>
+
+    <script>
+        const logList = document.getElementById('logList');
+
+        function logAction(action) {
+            const timestamp = new Date().toLocaleString();
+            const logItem = document.createElement('li');
+            logItem.textContent = `${timestamp} - ${action}`;
+            logList.appendChild(logItem);
+        }
+    </script>
+
+</body>
+</html>
