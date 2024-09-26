@@ -34,12 +34,14 @@
     <button onclick="logAction('對手機說話')">對手機說話</button>
     <button onclick="logAction('講電話')">講電話</button>
 
+    <button onclick="downloadCSV()">下載 CSV</button>
+    <button onclick="clear()">Clear</button>
     <div class="log" id="logArea">
         <h2>行為紀錄</h2>
         <ul id="logList"></ul>
     </div>
 
-    <button onclick="downloadCSV()">下載 CSV</button>
+    
 
     <script>
         let phoneStartTime = null; // 儲存看手機的開始時間
@@ -89,7 +91,7 @@
                 // 清空開始時間
                 phoneStartTime = null;
             } else {
-                alert("尚未開始記錄看手機的時間！");
+                logAction(`結束看手機 (看了 ${duration})`);
             }
         }
 
@@ -139,6 +141,10 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        }
+
+        function clear(){
+            localStorage.clear('logs')
         }
     </script>
 
