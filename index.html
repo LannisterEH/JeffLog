@@ -147,10 +147,8 @@
         }
 
         function clearlog(){
-            localStorage.removeItem('logs')
-            console.log(localStorage.getItem('logs'))
-             const logItem = document.createElement('li');               
-            logItem.textContent = ""
+            localStorage.removeItem('logs')            
+            displayLogs()
         }
     </script>
 
