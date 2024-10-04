@@ -6,8 +6,8 @@ from datetime import datetime
 
 # 設定參數
 fs = 44100  # 取樣率
-duration = 1  # 每次錄音的時長 (秒)
-noise_threshold = 0.015  # 噪音閾值，越小越敏感
+duration = 2  # 每次錄音的時長 (秒)
+noise_threshold = 0.1  # 噪音閾值，越小越敏感
 save_folder = "audiolog"  # 儲存錄音片段的資料夾
 
 # 如果資料夾不存在，創建它
